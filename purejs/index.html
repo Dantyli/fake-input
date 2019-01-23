@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>安全键盘--模拟键盘</title>
+</head>
+<style>
+body,html,ul,li,div,p,span{
+    padding: 0;
+    margin: 0;
+}
+.fake-input{
+    width: 300px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    position: relative;
+    padding: 0 5px;
+    text-align: right;
+    line-height: 50px;
+    margin: 20px auto;
+}
+.fake-input .focus:after{
+    content: "";
+    position: absolute;
+    right: 2px;
+    top: 10%;
+    height: 80%;
+    border-right: 1.5px solid #108ee9;
+    animation: keyboard-cursor infinite 1s step-end;
+}
+@keyframes keyboard-cursor{
+    0%{
+        opacity: 1
+    }
+    50%{
+        opacity:0
+    }
+    to{
+        opacity: 1;
+    }
+}
+.fake-input .fake-input-placeholder{
+    color: #ddd;
+}
+.keyboard{
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid #ddd;
+    display: none;
+    height: 200px;
+}
+.keyboard-numbers{
+    width: 75%;
+    display: inline-block;
+}
+.keyboard-numbers li{
+    width: 33.33%;
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 18px;
+}
+.keyboard-numbers li:active{
+    background: #ddd;
+}
+.keyboard-options{
+    width: 25%;
+    display: inline-block;
+    float:right;
+}
+.keyboard-options p{
+    height: 100px;
+    text-align: center;
+    line-height: 100px;
+}
+.keyboard-options p:nth-of-type(2){
+    background: #108ee9;
+    color: #fff;
+    opacity: 0.7;
+}
+.keyboard-options .active{
+    opacity: 1 !important;
+}
+.keyboard-open{
+    display: block;
+    animation: open .3s ease-in-out;
+}
+@keyframes open{
+    from{
+        transform: translateY(100%)
+    }
+    to{
+        transform:translateY(0)
+    }
+}
+</style>
+<body>
+    <div class="fake-input">
+        <div class="fake-input-focus"></div>
+        <div class="fake-input-placeholder">安全键盘输入</div>
+    </div>
+    <div class="keyboard">
+        <ul class="keyboard-numbers">
+            <li class="number-item">1</li>
+            <li class="number-item">2</li>
+            <li class="number-item">3</li>
+            <li class="number-item">4</li>
+            <li class="number-item">5</li>
+            <li class="number-item">6</li>
+            <li class="number-item">7</li>
+            <li class="number-item">8</li>
+            <li class="number-item">9</li>
+            <li class="number-item">.</li>
+            <li class="number-item">0</li>
+            <li class="keyboard-hide">⬇️</li>
+        </ul>
+        <div class="keyboard-options">
+            <p class="keyboard-backspace">删除</p>
+            <p class="keyboard-down">Done</p>
+        </div>
+    </div>
+    
+</body>
+<script>
+    (
+     function(){
+         //简单封装
+         function $(selector){
+             let query=document.querySelectorAll(selector);
+             if(query.length==1){
+                 return document.querySelector(selector)
+             }else{
+                 return query;
+             }
+         }
+         function onChange(){
+             if(value.length>0){
+                 $('.fake-input-placeholder').style.display='none'
+                 $('.keyboard-down').setAttribute('class','keyboard-down active')
+             }else{
+                $('.fake-input-placeholder').style.display='block'
+                $('.keyboard-down').setAttribute('class','keyboard-down')
+             }
+            $('.fake-input-focus').innerHTML=value.join('')
+         }
+         $('.fake-input').addEventListener('click',function(e){
+             e.stopPropagation()
+             $('.fake-input-focus').setAttribute('class','fake-input-focus focus')
+             $('.keyboard').setAttribute('class','keyboard keyboard-open')
+         })
+         //管理输入值
+         let value=[];
+         document.onclick=function(){
+            $('.fake-input-focus').setAttribute('class','fake-input-focus')
+            $('.keyboard').setAttribute('class','keyboard')
+         }
+        $('.number-item').forEach(v=>{
+            v.addEventListener('click',function(e){
+                e.stopPropagation()
+                value.push(v.innerHTML)
+                onChange()
+            })
+        })
+        $('.keyboard-backspace').addEventListener('click',function(e){
+            e.stopPropagation()
+            value.pop()
+            onChange()
+        })
+        $('.keyboard-down').addEventListener('click',function(){
+            document.onclick()
+        })
+        
+     }
+    )()
+     
+</script>
+</html>
